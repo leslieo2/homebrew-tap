@@ -12,23 +12,21 @@ cask "tuyi" do
     strategy :github_latest
   end
 
-  depends_on macos: ">= :ventura"
+  depends_on macos: :ventura
 
-  postflight do
-    system_command "/bin/bash",
-                   args: ["#{staged_path}/tuyi-v#{version}-macos/scripts/install.sh"]
+  postflight_steps do
+    run "/bin/bash", args: ["{{staged_path}}/tuyi-v#{version}-macos/scripts/install.sh"]
   end
 
-  uninstall_preflight do
-    system_command "/bin/bash",
-                   args: ["#{staged_path}/tuyi-v#{version}-macos/scripts/uninstall.sh"]
+  uninstall_preflight_steps do
+    run "/bin/bash", args: ["{{staged_path}}/tuyi-v#{version}-macos/scripts/uninstall.sh"]
   end
 
   caveats <<~EOS
     To finish setup in Google Chrome (first time only):
       1. Open chrome://extensions and enable Developer mode.
       2. Click "Load unpacked" and select:
-         #{Dir.home}/Library/Application Support/Local Image Translator/extension
+         ~/Library/Application Support/Local Image Translator/extension
 
     After running `brew upgrade --cask tuyi`, click Reload on the Tuyi card in chrome://extensions.
   EOS

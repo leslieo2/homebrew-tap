@@ -15,11 +15,40 @@ cask "tuyi" do
   depends_on macos: :ventura
 
   postflight_steps do
-    run "/bin/bash", args: ["{{staged_path}}/tuyi-v#{version}-macos/scripts/install.sh"]
+    mkdir_p "Library/Application Support/Local Image Translator", base: :home
+    mkdir_p "Library/Application Support/Google/Chrome/NativeMessagingHosts", base: :home
+    copy "tuyi-v{{version}}-macos/bin/image-translator-host",
+         "Library/Application Support/Local Image Translator/image-translator-host",
+         source_base: :staged_path, target_base: :home, overwrite: true
+    set_permissions "Library/Application Support/Local Image Translator/image-translator-host",
+                    "700", base: :home
+    remove "Library/Application Support/Local Image Translator/extension", base: :home, recursive: true
+    copy "tuyi-v{{version}}-macos/extension",
+         "Library/Application Support/Local Image Translator/extension",
+         source_base: :staged_path, target_base: :home, recursive: true, overwrite: true
+    write_file "Library/Application Support/Google/Chrome/NativeMessagingHosts/com.local_image_translator.host.json",
+               "{\"path\":\"#{Dir.home}/Library/Application Support/Local Image Translator/image-translator-host\",\"type\":\"stdio\",\"name\":\"com.local_image_translator.host\",\"description\":\"Local Image Translator\",\"allowed_origins\":[\"chrome-extension://mdiekkelcfdcmidenpbbdaikibmakcif/\"]}\n",
+               base: :home, overwrite: true
+    run "/usr/bin/xattr",
+        args: ["-dr", "com.apple.quarantine",
+               "#{Dir.home}/Library/Application Support/Local Image Translator/image-translator-host",
+               "#{Dir.home}/Library/Application Support/Local Image Translator/extension"],
+        must_succeed: false,
+        print_stderr: false,
+        writable_paths: [
+          "Library/Application Support/Local Image Translator/image-translator-host",
+          "Library/Application Support/Local Image Translator/extension"
+        ],
+        writable_base: :home
   end
 
   uninstall_preflight_steps do
-    run "/bin/bash", args: ["{{staged_path}}/tuyi-v#{version}-macos/scripts/uninstall.sh"]
+    remove "Library/Application Support/Google/Chrome/NativeMessagingHosts/com.local_image_translator.host.json",
+           base: :home
+    remove "Library/Application Support/Local Image Translator/image-translator-host",
+           base: :home
+    remove "Library/Application Support/Local Image Translator/extension",
+           base: :home, recursive: true
   end
 
   caveats <<~EOS

@@ -1,6 +1,6 @@
 cask "tuyi" do
-  version "1.2.0"
-  sha256 "0fc915241cd310ef4a86960f98269519dee65b8fef702874b94e31ea251dae4e"
+  version "1.4.2"
+  sha256 "93abb47cb2e2e4fd485eee47e642aca3c9ab8a2397a16fb619a0aa58284d224e"
 
   url "https://github.com/leslieo2/tuyi/releases/download/v#{version}/tuyi-v#{version}-macos.zip"
   name "Tuyi"

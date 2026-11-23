@@ -1,6 +1,6 @@
 cask "tuyi" do
-  version "1.4.2"
-  sha256 "93abb47cb2e2e4fd485eee47e642aca3c9ab8a2397a16fb619a0aa58284d224e"
+  version "2.0.0"
+  sha256 "34cba474e2e0539a0d4f1f95f4e3d5d932969888ddc6f171b9ceb0715a9be7c9"
 
   url "https://github.com/leslieo2/tuyi/releases/download/v#{version}/tuyi-v#{version}-macos.zip"
   name "Tuyi"
@@ -12,7 +12,7 @@ cask "tuyi" do
     strategy :github_latest
   end
 
-  depends_on macos: :ventura
+  depends_on macos: :tahoe
 
   postflight_steps do
     mkdir_p "Library/Application Support/Local Image Translator", base: :home
